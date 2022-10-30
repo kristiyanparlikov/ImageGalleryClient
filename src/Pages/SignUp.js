@@ -13,14 +13,14 @@ const SignUp = () => {
     await signUp(email)
       .then((response) => {
         if (response.status === 200)
-        toast.success("Successfully signed up", {
-          position: "top-center",
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: 0,
-        });
+          toast.success("Successfully signed up", {
+            position: "top-center",
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 0,
+          });
         setEmail("");
         navigate("/signin");
       })
@@ -41,7 +41,10 @@ const SignUp = () => {
     <>
       <div className="mt-4 p-5 bg-light">
         <h1 className="text-center mb-4">Sign Up</h1>
-        <form className="d-flex justify-content-center mb-4" onSubmit={handleSubmit}>
+        <form
+          className="d-flex justify-content-center mb-4"
+          onSubmit={handleSubmit}
+        >
           <div className="form-group me-sm-2">
             <input
               type="email"

@@ -1,10 +1,8 @@
 import React, { useContext } from "react";
 import { UserContext } from "../Contexts/UserContext";
-import { FavouriteContext } from "../Contexts/ImageContext";
 
 const Home = () => {
-  const { user, setUser } = useContext(UserContext);
-  const { favourites, setFavourites } = useContext(FavouriteContext);
+  const { user } = useContext(UserContext);
   return (
     <>
       <h2>Home</h2>

@@ -16,21 +16,20 @@ code {
   position: relative;
 }
 
-.img-container .image-list{
+.img-container .image{
  aspect-ratio: 4/3;
- cursor: pointer;
  transition: .5s ease;
 }
 
-.img-container:hover .image-list{
+.img-container:hover .image{
   opacity: 0.8;
 }
 
-.img-container:hover .heart-button-list{
+.img-container:hover .heart-button{
   opacity: 1;
 }
 
-.heart-button-list {
+.heart-button{
   position: absolute;
   color: red;
   font-size: 50px;
@@ -43,14 +42,6 @@ code {
   cursor: pointer;
 }
 
-.heart-button-carousel {
-  color: red;
-  font-size: 50px;
-  text-align: center;
-  animation: fade 0.2s linear;
-  cursor: pointer;
-}
-
 @keyframes fade {
   0% {
     opacity: 0;
@@ -58,4 +49,15 @@ code {
   100% {
    opacity: 1;
   }
+}
+
+
+.smooth-image {
+  transition: opacity 1s;
+}
+.image-visible {
+  opacity: 1;
+}
+.image-hidden {
+  opacity: 0;
 }

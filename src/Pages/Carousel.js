@@ -1,192 +1,149 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  getImagePageAuthenticated,
-  getImagePageUnauthenticated,
-} from "../api/apis/image";
-import { ImageContext } from "../Contexts/ImageContext";
+import { getImagePage } from "../api/apis/image";
 import { UserContext } from "../Contexts/UserContext";
-import "../index.css";
-import { removeFavourite, addFavourite } from "../api/apis/favourite";
+import Image from "../Components/Image";
+import GridSystem from "../Components/GridSystem";
 import { toast } from "react-toastify";
+import { deleteImage } from "../api/apis/image";
 
 const Carousel = () => {
-  const imageBaseUrl = "https://localhost:7255/";
   const navigate = useNavigate();
   const { id } = useParams();
-  const pageId = parseInt(id);
-  const { images, setImages } = useContext(ImageContext);
-  const { user, setUser } = useContext(UserContext);
+  const [pageId, setPageId] = useState(parseInt(id));
+  const [images, setImages] = useState([]);
   const [pagination, setPagination] = useState(null);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
-    const getPageAuthenticated = async () => {
-      const { image, pagination } = await getImagePageAuthenticated(
-        pageId,
-        user.userId
-      );
+    const userId = user ? user.userId : 0;
+    const getPage = async () => {
+      const { image, pagination } = await getImagePage(pageId, userId);
       setImages(image);
       setPagination(pagination);
     };
-    const getPageUnauthenticated = async () => {
-      const { image, pagination } = await getImagePageUnauthenticated(pageId);
-      setImages(image);
-      setPagination(pagination);
-    };
-    if (user != null) getPageAuthenticated();
-    else getPageUnauthenticated();
-  }, [user]);
+    getPage();
+  }, [user, pageId]);
 
-  const handlePageChange = async (pageId) => {
-    if (user != null) {
-      const { image, pagination } = await getImagePageAuthenticated(
-        pageId,
-        user.userId
-      );
-      setImages(image);
-      setPagination(pagination);
-    } else {
-      const { image, pagination } = await getImagePageUnauthenticated(pageId);
-      setImages(image);
-      setPagination(pagination);
-    }
+  const handleDelete = async (id) => {
+    await deleteImage(id)
+      .then((response) => {
+        setImages(images.filter((image) => image.imageId !== id));
+        console.log(response);
+        toast.success("Image deleted successfully!", {
+          position: "top-center",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: 0,
+        });
+      })
+      .catch((err) => {
+        if (err.response.status === 404) {
+          toast.error("Image could not be found.", {
+            position: "top-center",
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 0,
+          });
+        }
+      });
   };
 
   const previousPage = () => {
     if (pagination.HasPrevious) {
       navigate(`/carousel/${pageId - 1}`);
-      handlePageChange(pageId - 1);
+      setPageId(pageId - 1);
     }
   };
 
   const nextPage = () => {
     if (pagination.HasNext) {
       navigate(`/carousel/${pageId + 1}`);
-      handlePageChange(pageId + 1);
+      setPageId(pageId + 1);
     }
   };
 
-  const handleRemoveFavourite = async () => {
-    await removeFavourite(images[0].imageId, user.userId)
-      .then((response) => {
-        setImages(
-          images.map((img) => {
-            if (img.imageId === images[0].imageId)
-              return { ...img, favourite: false };
-            else return img;
-          })
-        );
-        toast.success(`${response.data}`, {
-          position: "top-center",
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: 0,
-        });
-      })
-      .catch((err) => {
-        if (err.response.status === 400) {
-          toast.error("Image could not be removed from favourites", {
-            position: "top-center",
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: 0,
-          });
-        }
-      });
-  };
+  const nav = (
+    <nav className="d-flex justify-content-between">
+      <button className="btn btn-primary" onClick={previousPage}>
+        Previous
+      </button>
+      {pagination && (
+        <h4>
+          Page: {pageId} of {pagination.TotalPages}
+        </h4>
+      )}
 
-  const handleAddFavourite = async () => {
-    await addFavourite(images[0].imageId, user.userId)
-      .then((response) => {
-        setImages(
-          images.map((img) => {
-            if (img.imageId === images[0].imageId)
-              return { ...img, favourite: true };
-            else return img;
-          })
-        );
-        toast.success(`${response.data}`, {
-          position: "top-center",
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: 0,
-        });
-      })
-      .catch((err) => {
-        if (err.response.status === 400) {
-          toast.error("Image could not be added to favourites", {
-            position: "top-center",
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: 0,
-          });
-        }
-      });
-  };
+      <button className="btn btn-primary" onClick={nextPage}>
+        Next
+      </button>
+    </nav>
+  )
 
-  const handleHeartClick = async (e) => {
-    e.stopPropagation();
-    if (images[0].favourite) await handleRemoveFavourite();
-    else await handleAddFavourite();
-  };
+  const grid = (
+    <GridSystem colCount={1} md={12}>
+        {images.map((image) => (
+          <>
+            <h2 className="text-center">{image.imageName}</h2>
+            <Image
+              image={image}
+              key={image.imageId}
+              handleDelete={handleDelete}
+              images={images}
+              setImages={setImages}
+            />
+          </>
+        ))}
+      </GridSystem>
+  )
 
   return (
     <>
-      <nav className="d-flex justify-content-between">
-        <button className="btn btn-primary" onClick={previousPage}>
-          Previous
-        </button>
-        {pagination && (
-          <h4>
-            Page: {pageId} of {pagination.TotalPages}
-          </h4>
-        )}
-
-        <button className="btn btn-primary" onClick={nextPage}>
-          Next
-        </button>
-      </nav>
-      {images.map((image) => (
-        <>
-          <div>
-            <h2 className="text-center">{image.imageName}</h2>
-          </div>
-          <div className="d-flex justify-content-center">
-          {user ? (
-            <i
-              onClick={handleHeartClick}
-              className={
-                image.favourite === true
-                  ? "heart-button-carousel bi bi-heart-fill"
-                  : "heart-button-carousel bi bi-heart"
-              }
-
-            ></i>
-          ) : (
-            <></>
-          )}
-          </div>
-          
-          <div className="img-container">
-            <img
-            key={image.imageId}
-              className="img-fluid w-100"
-              src={imageBaseUrl + image.imagePath}
-              alt={image.imageName}
-            />
-          </div>
-        </>
-      ))}
+    {nav}
+    {grid}
     </>
   );
 };
 
 export default Carousel;
+
+{
+  /* <div>
+            <h2 className="text-center">{image.imageName}</h2>
+          </div>
+          <div className="d-flex justify-content-center">
+            {user ? (
+              <i
+                onClick={handleHeartClick}
+                className={
+                  image.favourite === true
+                    ? "heart-button-carousel bi bi-heart-fill"
+                    : "heart-button-carousel bi bi-heart"
+                }
+              ></i>
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className="img-container">
+            <img
+              key={image.imageId}
+              src={imageBaseUrl + image.imagePath}
+              alt={image.imageName}
+              className={`smooth-image img-fluid w-100 image-${
+                imageLoaded ? 'visible' :  'hidden'
+              }`}
+              onLoad={()=> setImageLoaded(true)}
+            />
+            {!imageLoaded && (
+          <div className="smooth-preloader">
+            <span className="loader" />
+          </div> 
+        )}
+          </div> */
+}

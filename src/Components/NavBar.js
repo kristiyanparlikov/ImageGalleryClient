@@ -1,18 +1,15 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../Contexts/UserContext";
-import { FavouriteContext } from "../Contexts/ImageContext";
 import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
-  const { favourites, setFavourites } = useContext(FavouriteContext);
   const handleSignOut = () => {
     setUser(null);
-    setFavourites([]);
-    window.localStorage.removeItem("user")
-    navigate("/")
+    window.localStorage.removeItem("user");
+    navigate("/");
   };
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -31,7 +28,7 @@ const NavBar = () => {
             <Link className="nav-item nav-link" to="/carousel/1">
               Carousel
             </Link>
-            
+
             <Link className="nav-item nav-link" to="/favourites">
               Favourites
             </Link>

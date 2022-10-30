@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const emailRef = useRef();
 
@@ -23,9 +23,9 @@ const SignIn = () => {
             draggable: true,
             progress: 0,
           });
-          
+
         setUser(response.data);
-        window.localStorage.setItem("user", JSON.stringify(response.data))
+        window.localStorage.setItem("user", JSON.stringify(response.data));
         setEmail("");
         navigate("/");
       })

@@ -1,29 +1,30 @@
 import React, { useState, useEffect, useContext } from "react";
 import PaginatedImageList from "../Components/PaginatedImageList";
 import { UserContext } from "../Contexts/UserContext";
-import { FavouriteContext } from "../Contexts/ImageContext";
 import { getFavouritesPage } from "../api/apis/favourite";
 
 const Favourites = () => {
   const { user } = useContext(UserContext);
-  const { favourites, setFavourites } = useContext(FavouriteContext);
+  const [images, setImages] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const pageSize = 30;
 
   const handlePageClick = async (data) => {
     let currentPage = data.selected + 1;
     const { favourites } = await getFavouritesPage(currentPage, user.userId);
-    setFavourites(favourites);
-    
+    setImages(favourites);
+
     window.scrollTo(0, 0);
   };
 
   useEffect(() => {
     const getFirstPage = async () => {
-      const { favourites, pagination } = await getFavouritesPage(1, user.userId);
-      setFavourites(favourites);
+      const { favourites, pagination } = await getFavouritesPage(
+        1,
+        user.userId
+      );
+      setImages(favourites);
       setPageCount(Math.ceil(pagination.TotalCount / pageSize));
-      console.log(favourites)
     };
     getFirstPage();
   }, []);
@@ -42,8 +43,8 @@ const Favourites = () => {
       <PaginatedImageList
         handlePageClick={handlePageClick}
         pageCount={pageCount}
-        images={favourites}
-        setImages={setFavourites}
+        images={images}
+        setImages={setImages}
       />
     </>
   );

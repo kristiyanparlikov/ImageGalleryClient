@@ -14,9 +14,12 @@ export const getFavouritesPage = async (currentPage, userId) => {
 };
 
 export const getFavourites = async (userId) => {
-  const response = await axiosClient.get(`/favourites?userId=${userId}`, options);
+  const response = await axiosClient.get(
+    `/favourites?userId=${userId}`,
+    options
+  );
   return response;
-}
+};
 
 export const addFavourite = async (imageId, userId) => {
   const response = await axiosClient.post(
@@ -25,14 +28,13 @@ export const addFavourite = async (imageId, userId) => {
     options
   );
   return response;
-}
+};
 
 export const removeFavourite = async (imageId, userId) => {
   const response = await axiosClient.delete(
     "/favourites",
-    { data: {imageId: imageId, userId: userId }},
+    { data: { imageId: imageId, userId: userId } },
     options
   );
   return response;
-}
-
+};

@@ -4,20 +4,46 @@ import { Modal } from "react-bootstrap";
 import { UserContext } from "../Contexts/UserContext";
 import { removeFavourite, addFavourite } from "../api/apis/favourite";
 import { toast } from "react-toastify";
+import { deleteImage } from "../api/apis/image";
 
-const Image = ({ image, handleDelete, images, setImages }) => {
+const Image = ({
+  image,
+  images,
+  setImages,
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { user } = useContext(UserContext);
   const imageBaseUrl = "https://localhost:7255/";
   const [isImageHovered, setImageHover] = useState(false);
   const [isIconHovered, setIconHover] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
+  const handleDelete = async (id) => {
+    await deleteImage(id)
+      .then((response) => {
+        setImages(images.filter((image) => image.imageId !== id));
+        console.log(response);
+        toast.success("Image deleted successfully!", {
+          position: "top-center",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: 0,
+        });
+      })
+      .catch((err) => {
+        if (err.response.status === 404) {
+          toast.error("Image could not be found.", {
+            position: "top-center",
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: 0,
+          });
+        }
+      });
   };
 
   const handleRemoveFavourite = async () => {
@@ -52,6 +78,15 @@ const Image = ({ image, handleDelete, images, setImages }) => {
         }
       });
   };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+  
 
   const handleAddFavourite = async () => {
     await addFavourite(image.imageId, user.userId)
@@ -93,34 +128,28 @@ const Image = ({ image, handleDelete, images, setImages }) => {
     else await handleAddFavourite();
   };
 
-  // const onComplete = after(images.length, () => {
-  //   console.log("loaded");
-  // });
-
-  // function after(count, f) {
-  //   let noOfCalls = 0;
-  //   return function (...rest) {
-  //     noOfCalls = noOfCalls + 1;
-  //     if (count === noOfCalls) {
-  //       f(...rest);
-  //     }
-  //   };
-  // }
-
   return (
     <>
       <div
-        className="img-container col-sm-6 col-md-4 mb-4 "
+        className="img-container mb-4"
         key={image.imageId}
         onMouseOver={() => setImageHover(true)}
         onMouseOut={() => setImageHover(false)}
         onClick={handleModalOpen}
       >
         <img
-          className="image-list img-fluid w-100"
+          className={`smooth-image image img-fluid w-100 image-${
+            imageLoaded ? "visible" : "hidden"
+          }`}
+          onLoad={() => setImageLoaded(true)}
           src={imageBaseUrl + image.imagePath}
           alt={image.imageName}
         />
+        {!imageLoaded && (
+          <div className="smooth-preloader">
+            <span className="loader" />
+          </div>
+        )}
         <div className="overlay"></div>
         {isImageHovered && user && (
           <i
@@ -129,14 +158,15 @@ const Image = ({ image, handleDelete, images, setImages }) => {
             onClick={handleHeartClick}
             className={
               image.favourite && isIconHovered === false
-                ? "heart-button-list bi bi-heart-fill"
+                ? "heart-button bi bi-heart-fill"
                 : !image.favourite && isIconHovered === false
-                ? "heart-button-list bi bi-heart"
-                : "heart-button-list bi bi-heart-half"
+                ? "heart-button bi bi-heart"
+                : "heart-button bi bi-heart-half"
             }
           ></i>
         )}
       </div>
+
       <Modal size="lg" centered show={isModalOpen} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>{image.imageName}</Modal.Title>
