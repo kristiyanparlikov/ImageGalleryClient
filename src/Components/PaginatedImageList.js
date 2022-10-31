@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import ReactPaginate from "react-paginate";
 import Image from "./Image";
 import GridSystem from "./GridSystem";
@@ -8,8 +8,7 @@ const PaginatedImageList = ({
   setImages,
   handlePageClick,
   pageCount,
-}) => { 
-  
+}) => {
   const pagination = (
     <div className="mx-auto w-50 fixed-bottom">
       <ReactPaginate
@@ -40,14 +39,13 @@ const PaginatedImageList = ({
       {images.map((image) => {
         return (
           <>
-          <Image
-            image={image}
-            key={image.imageId}
-            images={images}
-            setImages={setImages}
-          ></Image>
-         
-      </>
+            <Image
+              image={image}
+              key={image.imageId}
+              images={images}
+              setImages={setImages}
+            ></Image>
+          </>
         );
       })}
     </GridSystem>
@@ -57,7 +55,6 @@ const PaginatedImageList = ({
     <>
       {grid}
       {pagination}
-     
     </>
   );
 };

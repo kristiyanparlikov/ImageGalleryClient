@@ -82,68 +82,31 @@ const Carousel = () => {
         Next
       </button>
     </nav>
-  )
+  );
 
   const grid = (
     <GridSystem colCount={1} md={12}>
-        {images.map((image) => (
-          <>
-            <h2 className="text-center">{image.imageName}</h2>
-            <Image
-              image={image}
-              key={image.imageId}
-              handleDelete={handleDelete}
-              images={images}
-              setImages={setImages}
-            />
-          </>
-        ))}
-      </GridSystem>
-  )
+      {images.map((image) => (
+        <>
+          <h2 className="text-center">{image.imageName}</h2>
+          <Image
+            image={image}
+            key={image.imageId}
+            handleDelete={handleDelete}
+            images={images}
+            setImages={setImages}
+          />
+        </>
+      ))}
+    </GridSystem>
+  );
 
   return (
     <>
-    {nav}
-    {grid}
+      {nav}
+      {grid}
     </>
   );
 };
 
 export default Carousel;
-
-{
-  /* <div>
-            <h2 className="text-center">{image.imageName}</h2>
-          </div>
-          <div className="d-flex justify-content-center">
-            {user ? (
-              <i
-                onClick={handleHeartClick}
-                className={
-                  image.favourite === true
-                    ? "heart-button-carousel bi bi-heart-fill"
-                    : "heart-button-carousel bi bi-heart"
-                }
-              ></i>
-            ) : (
-              <></>
-            )}
-          </div>
-
-          <div className="img-container">
-            <img
-              key={image.imageId}
-              src={imageBaseUrl + image.imagePath}
-              alt={image.imageName}
-              className={`smooth-image img-fluid w-100 image-${
-                imageLoaded ? 'visible' :  'hidden'
-              }`}
-              onLoad={()=> setImageLoaded(true)}
-            />
-            {!imageLoaded && (
-          <div className="smooth-preloader">
-            <span className="loader" />
-          </div> 
-        )}
-          </div> */
-}

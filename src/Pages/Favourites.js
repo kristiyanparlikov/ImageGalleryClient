@@ -7,7 +7,6 @@ const Favourites = () => {
   const { user } = useContext(UserContext);
   const [images, setImages] = useState([]);
   const [pageCount, setPageCount] = useState(0);
-  const pageSize = 30;
 
   const handlePageClick = async (data) => {
     let currentPage = data.selected + 1;
@@ -24,10 +23,10 @@ const Favourites = () => {
         user.userId
       );
       setImages(favourites);
-      setPageCount(Math.ceil(pagination.TotalCount / pageSize));
+      setPageCount(Math.ceil(pagination.TotalCount / pagination.PageSize));
     };
     getFirstPage();
-  }, []);
+  }, [user.userId]);
 
   return (
     <>

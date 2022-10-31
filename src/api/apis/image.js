@@ -8,9 +8,9 @@ const uploadImageOptions = {
   headers: { "Content-Type": "multipart/form-data" },
 };
 
-export const getImagesPage = async (currentPage, pageSize, userId) => {
+export const getImagesPage = async (currentPage, userId) => {
   const response = await axiosClient.get(
-    `/images?pageNumber=${currentPage}&pageSize=${pageSize}&userId=${userId}`,
+    `/images?pageNumber=${currentPage}&pageSize=30&userId=${userId}`,
     options
   );
   const paginationHeader = JSON.parse(response.headers.get("X-Pagination"));
@@ -18,20 +18,24 @@ export const getImagesPage = async (currentPage, pageSize, userId) => {
 };
 
 export const getImagePage = async (currentPage, userId) => {
-  const response = await axiosClient.get(`/images?pageNumber=${currentPage}&pageSize=1&userId=${userId}`, options)
-  const paginationHeader = JSON.parse(
-      response.headers.get("X-Pagination")
-    );
-  return { image: response.data, pagination: paginationHeader}
-}
+  const response = await axiosClient.get(
+    `/images?pageNumber=${currentPage}&pageSize=1&userId=${userId}`,
+    options
+  );
+  const paginationHeader = JSON.parse(response.headers.get("X-Pagination"));
+  return { image: response.data, pagination: paginationHeader };
+};
 
 export const uploadImage = async (formData) => {
-  const response = await axiosClient.post("/images", formData, uploadImageOptions);
+  const response = await axiosClient.post(
+    "/images",
+    formData,
+    uploadImageOptions
+  );
   return response;
-}
+};
 
 export const deleteImage = async (id) => {
-  const response = axiosClient.delete(`/images/${id}`, options)
-}
-
-
+  const response = axiosClient.delete(`/images/${id}`, options);
+  return response;
+};

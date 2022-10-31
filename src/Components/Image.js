@@ -6,11 +6,7 @@ import { removeFavourite, addFavourite } from "../api/apis/favourite";
 import { toast } from "react-toastify";
 import { deleteImage } from "../api/apis/image";
 
-const Image = ({
-  image,
-  images,
-  setImages,
-}) => {
+const Image = ({ image, images, setImages }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const { user } = useContext(UserContext);
@@ -86,7 +82,6 @@ const Image = ({
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
-  
 
   const handleAddFavourite = async () => {
     await addFavourite(image.imageId, user.userId)

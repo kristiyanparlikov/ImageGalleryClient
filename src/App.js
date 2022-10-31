@@ -30,7 +30,7 @@ function App() {
         <div className="container mt-4">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/gallery/:id" element={<Gallery />} />
             <Route path="/carousel/:id" element={<Carousel />} />
             <Route path="*" element={<PageNotFound />} />
             <Route path="/signin" element={<SignIn />} />

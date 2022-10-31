@@ -1,32 +1,36 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import PaginatedImageList from "../Components/PaginatedImageList";
 import { UserContext } from "../Contexts/UserContext";
 import { getImagesPage } from "../api/apis/image";
 
 const Gallery = () => {
+  const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  const [images, setImages] = useState([]);
+  const { id } = useParams();
+  const [pageId, setPageId] = useState(parseInt(id));
   const [pageCount, setPageCount] = useState(0);
-  const pageSize = 30;
+  const [images, setImages] = useState([]);
 
   const handlePageClick = async (data) => {
     let currentPage = data.selected + 1;
-    const userId = user ? user.userId : 0;
-    const { images } = await getImagesPage(currentPage, pageSize, userId);
-    setImages(images);
+    navigate(`/gallery/${currentPage}`);
+    setPageId(currentPage);
     window.scrollTo(0, 0);
   };
 
   useEffect(() => {
-    const getFirstPage = async () => {
+    const getPage = async () => {
       const userId = user ? user.userId : 0;
-      const { images, pagination } = await getImagesPage(1, pageSize, userId);
+      const { images, pagination } = await getImagesPage(
+        pageId,
+        userId
+      );
       setImages(images);
-      setPageCount(Math.ceil(pagination.TotalCount / pageSize));
+      setPageCount(Math.ceil(pagination.TotalCount / pagination.PageSize));
     };
-    getFirstPage();
-  }, []);
+    getPage();
+  }, [user, pageId]);
 
   return (
     <>

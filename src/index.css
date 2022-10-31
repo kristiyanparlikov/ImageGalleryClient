@@ -12,24 +12,24 @@ code {
     monospace;
 }
 
-.img-container{
+.img-container {
   position: relative;
 }
 
-.img-container .image{
- aspect-ratio: 4/3;
- transition: .5s ease;
+.img-container .image {
+  aspect-ratio: 4/3;
+  transition: 0.5s ease;
 }
 
-.img-container:hover .image{
+.img-container:hover .image {
   opacity: 0.8;
 }
 
-.img-container:hover .heart-button{
+.img-container:hover .heart-button {
   opacity: 1;
 }
 
-.heart-button{
+.heart-button {
   position: absolute;
   color: red;
   font-size: 50px;
@@ -42,16 +42,6 @@ code {
   cursor: pointer;
 }
 
-@keyframes fade {
-  0% {
-    opacity: 0;
-  }
-  100% {
-   opacity: 1;
-  }
-}
-
-
 .smooth-image {
   transition: opacity 1s;
 }
@@ -61,3 +51,14 @@ code {
 .image-hidden {
   opacity: 0;
 }
+
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
